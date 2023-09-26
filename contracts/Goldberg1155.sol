@@ -30,8 +30,8 @@ contract Goldberg1155 is ERC1155, Ownable {
 
     uint256 private _totalCurrencySupply;
 
-    constructor(uint256 currencyAmountMax, uint256 item1AmountMax, uint256 item2AmountMax)
-    ERC1155("https://some.host/item{id}.json") {
+    constructor(string memory tokenURI, uint256 currencyAmountMax, uint256 item1AmountMax, uint256 item2AmountMax)
+    ERC1155(tokenURI) {
         IN_GAME_CURRENCY_MAX = currencyAmountMax;
         GAME_ITEM_1_MAX = item1AmountMax;
         GAME_ITEM_2_MAX = item2AmountMax;

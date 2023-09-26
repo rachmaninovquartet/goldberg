@@ -25,16 +25,30 @@ contract GoldbergController is Ownable {
     // can arbitrarily mint erc20s, yes the tokenomics are questionable
     function make20s(address to, uint256 amount) public onlyOwner {
         GB20.mint(to, amount);
+        //EMIT
     }
 
     // can arbitrarily mint erc721s
-    function make721s(address to, string memory tokenURI) public onlyOwner {
-        GB721.mintWithCounter(to, tokenURI);
+    function make721s(address to) public onlyOwner {
+        GB721.mintWithCounter(to);
+        //EMIT
     }
 
     // can arbitrarily mint erc1155s
-    function make1155s(address to, uint256 currencyAmount, uint256 item1Amount, uint256 item2Amount,
-     uint256 item3Amount) public onlyOwner {
+    function make1155s(address to, uint256 currencyAmount, uint256 item1Amount,
+     uint256 item2Amount) public onlyOwner {
         GB1155.mint( to, currencyAmount, item1Amount, item2Amount);
+        //EMIT
+    }
+
+    // get paid
+    receive() external payable {
+        if (msg.value == 1 ether) {
+            make20s(msg.sender, 100);
+        } else if (msg.value == 2 ether) {
+            make721s(msg.sender);
+        } else if (msg.value == 3 ether) {
+            make1155s(msg.sender, 10, 1, 2);
+        } 
     }
 }
