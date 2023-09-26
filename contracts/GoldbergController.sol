@@ -11,6 +11,11 @@ import "./Goldberg1155.sol";
 
 contract GoldbergController is Ownable {
 
+    event Make20(address indexed to, uint256 amount);
+    event Make721(address indexed to);
+    event Make1155(address indexed to, uint256 currencyAmount, uint256 item1Amount,
+     uint256 item2Amount);
+
     Goldberg20 public GB20;
     Goldberg721 public GB721;
     Goldberg1155 public GB1155;
@@ -22,33 +27,29 @@ contract GoldbergController is Ownable {
         GB1155 = Goldberg1155(GB1155addy);
     }
 
-    // can arbitrarily mint erc20s, yes the tokenomics are questionable
-    function make20s(address to, uint256 amount) public onlyOwner {
+    function _make20s(address to, uint256 amount) private onlyOwner {
         GB20.mint(to, amount);
-        //EMIT
+        emit Make20(to, amount);
     }
 
-    // can arbitrarily mint erc721s
-    function make721s(address to) public onlyOwner {
+    function _make721s(address to) private onlyOwner {
         GB721.mintWithCounter(to);
-        //EMIT
+        emit Make721(to);
     }
 
-    // can arbitrarily mint erc1155s
-    function make1155s(address to, uint256 currencyAmount, uint256 item1Amount,
-     uint256 item2Amount) public onlyOwner {
+    function _make1155s(address to, uint256 currencyAmount, uint256 item1Amount,
+     uint256 item2Amount) private onlyOwner {
         GB1155.mint( to, currencyAmount, item1Amount, item2Amount);
-        //EMIT
+        emit Make1155(to, currencyAmount, item1Amount, item2Amount);
     }
 
-    // get paid
     receive() external payable {
         if (msg.value == 1 ether) {
-            make20s(msg.sender, 100);
+            _make20s(msg.sender, 100);
         } else if (msg.value == 2 ether) {
-            make721s(msg.sender);
+            _make721s(msg.sender);
         } else if (msg.value == 3 ether) {
-            make1155s(msg.sender, 10, 1, 2);
+            _make1155s(msg.sender, 10, 1, 2);
         } 
     }
 }
