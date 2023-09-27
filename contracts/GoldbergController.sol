@@ -5,11 +5,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./VerifySignature.sol";
 import "./Goldberg20.sol";
 import "./Goldberg721.sol";
 import "./Goldberg1155.sol";
 
-contract GoldbergController is Ownable {
+contract GoldbergController is Ownable, VerifySignature {
 
     event Make20(address indexed to, uint256 amount);
     event Make721(address indexed to);
@@ -90,13 +91,24 @@ contract GoldbergController is Ownable {
 
     // one opportunity per eth paid to win half the eth
     function gameOf20s() external {
-        require(GB20.balanceOf(msg.sender) > 0, "GoldbergController: need to have a balance");
+        require(GB20.balanceOf(msg.sender) > 0, "GoldbergController: need to have a 20 balance");
         require(_phase == Phases.TWO, "GoldbergController: need to be in phase 2");
         require(ethFor20s >= 1 ether, "GoldbergController: not enough 20 reward eth left");//allow them to win every eth but 1, so the contract creator can get some
         uint giveaway = ethFor20s/2;
         ethFor20s -= giveaway;
         GB20.burn(msg.sender, 1);
         msg.sender.call{value: giveaway};
+    }
+
+    // first person to correctly sign wins a pot of ETH
+    function gameOf721s(uint _nonce, uint256 tokenId, bytes memory signature) external {
+        require(GB721.balanceOf(msg.sender) > 0, "GoldbergController: need to have a 721 balance");
+        require(_phase == Phases.TWO, "GoldbergController: need to be in phase 2");
+        require(ethFor721s > 1 ether, "GoldbergController: not enough 721 reward eth left");//allow them to win every eth but 1, so the contract creator can get some
+        require(verify(msg.sender, "you need to send this to win!", _nonce, signature), "GoldbergController: not the right signature");
+        ethFor721s -= 1 ether; // keep 1 eth for contract
+        GB721.burn(tokenId);
+        msg.sender.call{value: ethFor721s};
     }
 
     //ruggable

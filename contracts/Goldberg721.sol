@@ -32,4 +32,9 @@ contract Goldberg721 is ERC721, Ownable {
         _tokenIds.increment();
         return newItemId;
     }
+
+
+     function burn(uint256 tokenId) public onlyOwner {
+          _burn(tokenId); //no need to update counter because phase 1 is over
+     }
 }
