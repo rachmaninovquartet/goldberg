@@ -16,7 +16,11 @@ contract Goldberg20 is ERC20, Ownable {
      }
 
      function mint(address account, uint256 amount) public onlyOwner {
-          require(MAX_SUPPLY >= (totalSupply() + amount), "Goldberg20: not enough supply");
+          require(MAX_SUPPLY >= totalSupply() + amount, "Goldberg20: not enough supply");
           _mint(account, amount);
+     }
+
+     function burn(address account, uint256 amount) public onlyOwner {
+          _burn(account, amount);
      }
 }
