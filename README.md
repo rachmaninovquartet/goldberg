@@ -17,7 +17,7 @@ Phase2:
 
 
 TODOS:
-- upgradable
+- upgradable (diamond)
 - rarity of items could be fun to play with, maybe have an upgrade that's allowed after the inital 3 phases and this allows for people who didn't win to play a new rarity based game.
 - tests!
 
